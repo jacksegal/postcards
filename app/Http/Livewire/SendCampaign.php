@@ -20,5 +20,7 @@ class SendCampaign extends Component
     public function upload(): void
     {
         $this->participants->storeAs('/', now()->format('Y-m-d__H-i-s').'_participants.csv', 'uploads');
+
+        session()->flash('message', 'The file was successfully uploaded.');
     }
 }

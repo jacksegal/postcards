@@ -23,9 +23,12 @@ class SendCampaignTest extends TestCase
 
         Livewire::test(SendCampaign::class)
             ->set('participants', $file)
-            ->call('upload');
+            ->call('upload')
+            ->assertSee('The file was successfully uploaded.');
 
         Storage::disk('uploads')->assertExists(now()->format('Y-m-d__H-i-s').'_participants.csv');
+
+
     }
 
 }
