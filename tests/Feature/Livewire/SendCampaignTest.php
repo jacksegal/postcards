@@ -7,6 +7,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
+use Tests\TestCampaign;
 use Tests\TestCase;
 
 class SendCampaignTest extends TestCase
@@ -27,8 +28,20 @@ class SendCampaignTest extends TestCase
             ->assertSee('The file was successfully uploaded.');
 
         Storage::disk('uploads')->assertExists(now()->format('Y-m-d__H-i-s').'_participants.csv');
+    }
 
+    /** @test **/
+    public function it_shows_campaigns_from_config_in_select(): void
+    {
+        Livewire::test(SendCampaign::class)
+            ->assertDontSee('OilCampaign');
 
+        config()->set('postcards.campaigns', [
+            TestCampaign::class
+        ]);
+
+        Livewire::test(SendCampaign::class)
+            ->assertSee('Test Campaign');
     }
 
 }

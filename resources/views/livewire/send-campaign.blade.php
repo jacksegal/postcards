@@ -12,4 +12,10 @@
 
         <button type="submit">Upload Participants</button>
     </form>
+
+    <select>
+        @foreach(config('postcards.campaigns') as $campaign)
+            <option>{{ (new $campaign)->getName() }}</option>
+        @endforeach
+    </select>
 </div>
