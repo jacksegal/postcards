@@ -3,10 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Postcards\PdfHelper;
-use Dompdf\Dompdf;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 
 class GeneratePostcardFrontPdf extends Command
 {
