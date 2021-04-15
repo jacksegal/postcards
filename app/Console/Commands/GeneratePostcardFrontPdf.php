@@ -15,9 +15,12 @@ class GeneratePostcardFrontPdf extends Command
 
     public function handle()
     {
-        $imagePath = asset('images/' . $this->argument('imageName') . '.png');
+        $imagePath = public_path('images/' . $this->argument('imageName') . '.png');
+        $imageUrl = asset('images/' . $this->argument('imageName') . '.png');
 
-        $html = view('pdf.template', ['image' => $imagePath])->render();
+        throw_if(!File::exists($imagePath),\ErrorException::class, 'Image does not exist here: ' .$imagePath);
+
+        $html = view('pdf.template', ['image' => $imageUrl])->render();
 
         $dompdf = new Dompdf();
         $options = $dompdf->getOptions();
