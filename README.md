@@ -10,13 +10,17 @@
 
 ## Create Postcard PDFs For The Front
 
-Since we often need the same PDFs for the front of postcards, we can generate them easily through an artisan command.
-
+We created an artisan command to generate those PDFs. If the image file will be stored locally, put it in the `publich/images/` folder. Then you can generate the PDF like this:
 ```shell
-php artisan postcards:generate-front-pdf postcards-front-climate-strike
+php artisan postcards:generate-front-pdf postcards-front-climate-strike.png
 ```
 
 This command will look for the image at `.../public/images/postcards-front-climate-strike.png` and if given, will create a postcard front PDF from it.
 The new pdf can now be found at `.../public/pdfs/`.
 
-Currently, only `pngs` are supported, but we can adapt that easily.
+If the image is stored online, use the URL instead of the image name like:
+```shell
+php artisan postcards:generate-front-pdf https://link-to.my/image
+```
+
+The new pdf can now be found at `.../public/pdfs/`.
