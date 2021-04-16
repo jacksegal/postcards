@@ -13,9 +13,9 @@
         <button type="submit">Upload Participants</button>
     </form>
 
-    <select>
+    <select wire:model="campaign">
         @foreach(config('postcards.campaigns') as $campaign)
-            <option>{{ (new $campaign)->getName() }}</option>
+            <option value="{{ $campaign }}">{{ (new $campaign)->getName() }}</option>
         @endforeach
     </select>
 </div>

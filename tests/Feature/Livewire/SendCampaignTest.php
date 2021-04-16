@@ -5,6 +5,7 @@ namespace Tests\Feature\Livewire;
 use App\Http\Livewire\SendCampaign;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Tests\TestCampaign;
@@ -23,7 +24,7 @@ class SendCampaignTest extends TestCase
         $file = UploadedFile::fake()->create('participants.csv');
 
         Livewire::test(SendCampaign::class)
-            ->set('participants', $file)
+            ->set('participantsUpload', $file)
             ->call('upload')
             ->assertSee('The file was successfully uploaded.');
 
@@ -42,6 +43,21 @@ class SendCampaignTest extends TestCase
 
         Livewire::test(SendCampaign::class)
             ->assertSee('Test Campaign');
+    }
+
+    /** @test **/
+    public function it_sends_the_campaign_and_trigger_pdf_print_calls_to_clicksend(): void
+    {
+        Http::fake();
+
+        // Arrange and Act
+        Livewire::test(SendCampaign::class)
+            ->set('participantsUploadFilePath', base_path('tests/dummy-participants.csv'))
+            ->set('campaignClass', TestCampaign::class)
+            ->call('send');
+
+    	// Assert
+        Http::assertSentCount(2);
     }
 
 }

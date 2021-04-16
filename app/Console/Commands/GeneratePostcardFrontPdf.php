@@ -25,7 +25,7 @@ class GeneratePostcardFrontPdf extends Command
             exit;
         }
 
-        $html = view('pdf.template', ['image' => $imageUrl])->render();
+        $html = view('pdf.template-default-front', ['image' => $imageUrl])->render();
         $pdfPath = public_path('pdfs/' . $imageName . '.pdf');
 
         $pdfHelper = new PdfHelper();
