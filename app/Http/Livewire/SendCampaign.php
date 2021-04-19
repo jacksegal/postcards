@@ -3,9 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Postcards\PdfHelper;
-use App\Postcards\PostcardSendHelper;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\File;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Spatie\SimpleExcel\SimpleExcelReader;
@@ -41,17 +39,7 @@ class SendCampaign extends Component
         SimpleExcelReader::create($this->supportersUploadFilePath)->getRows()
             ->each(function (array $supporter) use ($campaign, $pdfHelper) {
 
-                $campaignDirectory = $campaign->createDirectoryForSupporter($supporter['Supporter ID']);
-
-                // Create back pdf
-                $pdfHelper->createPostcardBack($supporter, $campaignDirectory);
-
-                // Copy given front PDF to current supporter files
-                $postcardFrontPdfPath = $campaign->getPostcardFrontPdfPath($supporter['Postcard Image']);
-                Storage::disk('campaigns')->put($campaignDirectory . '/' . $supporter['Supporter ID'].'/postcard_front.pdf', File::get($postcardFrontPdfPath));
-
-                $postcardSendHelper = new PostcardSendHelper;
-                $postcardSendHelper->print();
+                $campaign->send($supporter);
             });
     }
 }
