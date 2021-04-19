@@ -8,6 +8,19 @@
 * Run `php artisan migrate --seed` to migrate database tables and add admin users
 * You can now already login through the `/login` page with the credentials from the `UserTableSeeder`.
 
+## Configuration
+
+### Campaigns
+
+The `postSendHook` method on a campaign will be called after it was sent. It can be used to e.g. delete campaigns files after the campaign has been sent.
+
+```php
+public function postSendHook(): void
+{
+    Storage::disk('campaigns')->deleteDirectory($this->getCampaignDirectoryName());
+}
+```
+
 ## Create Postcard PDFs For The Front
 
 We created an artisan command to generate those PDFs. If the image file will be stored locally, put it in the `publich/images/` folder. Then you can generate the PDF like this:
