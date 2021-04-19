@@ -13,20 +13,31 @@ abstract class Campaign
 {
     public string $message = '';
 
+    private string $campaignDirectoryForSending = '';
+
+    private string $supporterDirectoryForSending = '';
+
     public function send(array $supporter): void
     {
         $pdfHelper = app(PdfHelper::class);
-        $campaignDirectory = $this->createDirectoryForSupporter($supporter['Supporter ID']);
+        $this->supporterDirectoryForSending = $this->createDirectoryForSupporter($supporter['Supporter ID']);
 
         // Create back pdf
-        $pdfHelper->createPostcardBack($supporter, $campaignDirectory);
+        $pdfHelper->createPostcardBack($this->supporterDirectoryForSending, $this->getPostcardBackHtml());
 
         // Copy given front PDF to current supporter files
         $postcardFrontPdfPath = $this->getPostcardFrontPdfPath($supporter['Postcard Image']);
-        Storage::disk('campaigns')->put($campaignDirectory . '/' . $supporter['Supporter ID'].'/postcard_front.pdf', File::get($postcardFrontPdfPath));
+        File::put($this->supporterDirectoryForSending .'/postcard_front.pdf', File::get($postcardFrontPdfPath));
 
         $postcardSendHelper = new PostcardSendHelper;
         $postcardSendHelper->print();
+
+        $this->postSendHook();
+    }
+
+    public function postSendHook(): void
+    {
+
     }
 
     public function getPostcardBackHtml(): string
@@ -39,12 +50,16 @@ abstract class Campaign
         return public_path('pdfs/'.$postcardFrontName.'.pdf');
     }
 
+    public function getCampaignDirectoryName(): string
+    {
+        return $this->campaignDirectoryForSending = now()->format('Y-m-d__H-i-s') . '_' . Str::of(TestCampaign::class)->afterLast('\\')->snake();
+    }
+
     public function createDirectoryForSupporter(string $supporterId): string
     {
-        $campaignDirectory = now()->format('Y-m-d__H-i-s') . '_' . Str::of(TestCampaign::class)->afterLast('\\')->snake();
-        Storage::disk('campaigns')->makeDirectory($campaignDirectory . '/' . $supporterId);
+        Storage::disk('campaigns')->makeDirectory($this->getCampaignDirectoryName() . '/' . $supporterId);
 
-        return Storage::disk('campaigns')->path($campaignDirectory . '/' . $supporterId);
+        return Storage::disk('campaigns')->path($this->campaignDirectoryForSending . '/' . $supporterId);
     }
 
 }

@@ -1,12 +1,9 @@
 <?php
 
-
 namespace App\Postcards;
-
 
 use Dompdf\Dompdf;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 
 class PdfHelper
 {
@@ -42,12 +39,11 @@ class PdfHelper
         File::put($this->path, $output);
     }
 
-    public function createPostcardBack(array $participant, string $campaignDirectory): void
+    public function createPostcardBack(string $campaignSupporterDirectory, string $html): void
     {
-        $html = view('pdf.template-default-back', ['message' => $participant['Message']])->render();
         $this
             ->useHtml($html)
-            ->outputPath(Storage::disk('campaigns')->path('/').$campaignDirectory . '/' . $participant['Supporter ID'].'/postcard_back.pdf')
+            ->outputPath($campaignSupporterDirectory . '/postcard_back.pdf')
             ->create();
     }
 }

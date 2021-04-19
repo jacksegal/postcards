@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use ErrorException;
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
@@ -45,14 +44,5 @@ class GeneratePostcardFrontPdfTest extends TestCase
 
         // Clean up
         File::delete(public_path('pdfs/1935.pdf'));
-    }
-
-    /** @test **/
-    public function it_throws_error_if_image_not_given(): void
-    {
-        $this->expectException(ErrorException::class);
-
-        // Act
-        $this->artisan('postcards:generate-front-pdf image-not-given');
     }
 }

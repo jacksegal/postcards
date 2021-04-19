@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCampaign;
+use Tests\TestCampaignWithFileDeletion;
 use Tests\TestCase;
 
 class SendCampaignTest extends TestCase
@@ -47,7 +48,7 @@ class SendCampaignTest extends TestCase
     }
 
     /** @test **/
-    public function it_stores_PDFs_for_every_supporter(): void
+    public function it_stores_supporter_pdfs_after_sent(): void
     {
         // Arrange
         Carbon::setTestNow(now());
@@ -60,12 +61,34 @@ class SendCampaignTest extends TestCase
             ->set('campaignClass', TestCampaign::class)
             ->call('send');
 
-        // Assert
+        // Assert supporter files are being stored
         $this->assertDirectoryExists(Storage::disk('campaigns')->path($campaignDirectoryName));
         $this->assertDirectoryExists(Storage::disk('campaigns')->path($campaignDirectoryName.'/194764356'));
         $this->assertDirectoryExists(Storage::disk('campaigns')->path($campaignDirectoryName.'/194764357'));
         $this->assertFileExists(Storage::disk('campaigns')->path($campaignDirectoryName.'/194764356/postcard_back.pdf'));
         $this->assertFileExists(Storage::disk('campaigns')->path($campaignDirectoryName.'/194764356/postcard_front.pdf'));
+    }
+
+    /** @test **/
+    public function it_deletes_supporter_pdfs_after_sent(): void
+    {
+        // Arrange
+        Carbon::setTestNow(now());
+        Http::fake();
+        $campaignDirectoryName = now()->format('Y-m-d__H-i-s').'_'.Str::of(TestCampaign::class)->afterLast('\\')->snake();
+
+        // Act
+        Livewire::test(SendCampaign::class)
+            ->set('supportersUploadFilePath', base_path('tests/dummy-supporters.csv'))
+            ->set('campaignClass', TestCampaignWithFileDeletion::class)
+            ->call('send');
+
+        // Assert supporter files are being stored
+        $this->assertDirectoryDoesNotExist(Storage::disk('campaigns')->path($campaignDirectoryName));
+        $this->assertDirectoryDoesNotExist(Storage::disk('campaigns')->path($campaignDirectoryName.'/194764356'));
+        $this->assertDirectoryDoesNotExist(Storage::disk('campaigns')->path($campaignDirectoryName.'/194764357'));
+        $this->assertFileDoesNotExist(Storage::disk('campaigns')->path($campaignDirectoryName.'/194764356/postcard_back.pdf'));
+        $this->assertFileDoesNotExist(Storage::disk('campaigns')->path($campaignDirectoryName.'/194764356/postcard_front.pdf'));
     }
 
     /** @test **/
