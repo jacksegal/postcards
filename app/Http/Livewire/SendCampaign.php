@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire;
 
-use App\Postcards\PdfHelper;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -32,14 +31,13 @@ class SendCampaign extends Component
         session()->flash('message', 'The file was successfully uploaded.');
     }
 
-    public function send(PdfHelper $pdfHelper): void
+    public function send(): void
     {
         $campaign = new $this->campaignClass;
 
         SimpleExcelReader::create($this->supportersUploadFilePath)->getRows()
-            ->each(function (array $supporter) use ($campaign, $pdfHelper) {
-
-                $campaign->send($supporter);
+            ->each(function (array $supporterInfo) use ($campaign) {
+                $campaign->send($supporterInfo);
             });
     }
 }
