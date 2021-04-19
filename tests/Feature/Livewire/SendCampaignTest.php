@@ -7,6 +7,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCampaign;
 use Tests\TestCase;
@@ -24,11 +25,11 @@ class SendCampaignTest extends TestCase
         $file = UploadedFile::fake()->create('participants.csv');
 
         Livewire::test(SendCampaign::class)
-            ->set('participantsUpload', $file)
+            ->set('supportersUpload', $file)
             ->call('upload')
             ->assertSee('The file was successfully uploaded.');
 
-        Storage::disk('uploads')->assertExists(now()->format('Y-m-d__H-i-s').'_participants.csv');
+        Storage::disk('uploads')->assertExists(now()->format('Y-m-d__H-i-s').'_supporters.csv');
     }
 
     /** @test **/
@@ -46,13 +47,35 @@ class SendCampaignTest extends TestCase
     }
 
     /** @test **/
-    public function it_sends_the_campaign_and_trigger_pdf_print_calls_to_clicksend(): void
+    public function it_stores_PDFs_for_every_supporter(): void
+    {
+        // Arrange
+        Carbon::setTestNow(now());
+        Http::fake();
+        $campaignDirectoryName = now()->format('Y-m-d__H-i-s').'_'.Str::of(TestCampaign::class)->afterLast('\\')->snake();
+
+        // Act
+        Livewire::test(SendCampaign::class)
+            ->set('supportersUploadFilePath', base_path('tests/dummy-supporters.csv'))
+            ->set('campaignClass', TestCampaign::class)
+            ->call('send');
+
+        // Assert
+        $this->assertDirectoryExists(Storage::disk('campaigns')->path($campaignDirectoryName));
+        $this->assertDirectoryExists(Storage::disk('campaigns')->path($campaignDirectoryName.'/194764356'));
+        $this->assertDirectoryExists(Storage::disk('campaigns')->path($campaignDirectoryName.'/194764357'));
+        $this->assertFileExists(Storage::disk('campaigns')->path($campaignDirectoryName.'/194764356/postcard_back.pdf'));
+        $this->assertFileExists(Storage::disk('campaigns')->path($campaignDirectoryName.'/194764356/postcard_front.pdf'));
+    }
+
+    /** @test **/
+    public function it_sends_the_campaign_and_triggers_pdf_print_calls_to_clicksend(): void
     {
         Http::fake();
 
         // Arrange and Act
         Livewire::test(SendCampaign::class)
-            ->set('participantsUploadFilePath', base_path('tests/dummy-participants.csv'))
+            ->set('supportersUploadFilePath', base_path('tests/dummy-supporters.csv'))
             ->set('campaignClass', TestCampaign::class)
             ->call('send');
 

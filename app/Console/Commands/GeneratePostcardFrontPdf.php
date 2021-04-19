@@ -30,7 +30,7 @@ class GeneratePostcardFrontPdf extends Command
 
         $pdfHelper = new PdfHelper();
         $pdfHelper->useHtml($html)
-            ->path($pdfPath)
+            ->outputPath($pdfPath)
             ->create();
 
     }

@@ -11,7 +11,6 @@ class GeneratePostcardFrontPdfTest extends TestCase
     /** @test **/
     public function it_creates_pdf_from_artisan_command_using_local_image(): void
     {
-        $this->withoutExceptionHandling();
         // Act
     	$this->artisan('postcards:generate-front-pdf postcard-test-front-image.png');
 

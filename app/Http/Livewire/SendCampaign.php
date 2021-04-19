@@ -2,8 +2,10 @@
 
 namespace App\Http\Livewire;
 
+use App\Postcards\PdfHelper;
 use App\Postcards\PostcardSendHelper;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\File;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Spatie\SimpleExcel\SimpleExcelReader;
@@ -13,9 +15,9 @@ class SendCampaign extends Component
 {
     use WithFileUploads;
 
-    public $participantsUpload;
+    public $supportersUpload;
 
-    public $participantsUploadFilePath;
+    public $supportersUploadFilePath;
 
     public $campaignClass;
 
@@ -26,18 +28,30 @@ class SendCampaign extends Component
 
     public function upload(): void
     {
-        $fileName = $this->participantsUpload->storeAs('/', now()->format('Y-m-d__H-i-s').'_participants.csv', 'uploads');
-        $this->participantsUploadFilePath = Storage::disk('uploads')->path($fileName);
+        $fileName = $this->supportersUpload->storeAs('/', now()->format('Y-m-d__H-i-s') . '_supporters.csv', 'uploads');
+        $this->supportersUploadFilePath = Storage::disk('uploads')->path($fileName);
 
         session()->flash('message', 'The file was successfully uploaded.');
     }
 
-    public function send(): void
+    public function send(PdfHelper $pdfHelper): void
     {
-        SimpleExcelReader::create($this->participantsUploadFilePath)->getRows()
-            ->each(function(array $rowProperties) {
-               $postcardSendHelper = new PostcardSendHelper;
-               $postcardSendHelper->print();
+        $campaign = new $this->campaignClass;
+
+        SimpleExcelReader::create($this->supportersUploadFilePath)->getRows()
+            ->each(function (array $supporter) use ($campaign, $pdfHelper) {
+
+                $campaignDirectory = $campaign->createDirectoryForSupporter($supporter['Supporter ID']);
+
+                // Create back pdf
+                $pdfHelper->createPostcardBack($supporter, $campaignDirectory);
+
+                // Copy given front PDF to current supporter files
+                $postcardFrontPdfPath = $campaign->getPostcardFrontPdfPath($supporter['Postcard Image']);
+                Storage::disk('campaigns')->put($campaignDirectory . '/' . $supporter['Supporter ID'].'/postcard_front.pdf', File::get($postcardFrontPdfPath));
+
+                $postcardSendHelper = new PostcardSendHelper;
+                $postcardSendHelper->print();
             });
     }
 }

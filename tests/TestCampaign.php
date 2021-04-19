@@ -4,7 +4,9 @@
 namespace Tests;
 
 
-class TestCampaign
+use App\Postcards\Campaigns\Campaign;
+
+class TestCampaign extends Campaign
 {
     private string $name = 'Test Campaign';
 
