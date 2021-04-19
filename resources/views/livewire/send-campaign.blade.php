@@ -15,7 +15,7 @@
 
     <select wire:model="campaign">
         @foreach(config('postcards.campaigns') as $campaign)
-            <option value="{{ $campaign }}">{{ (new $campaign)->getName() }}</option>
+            <option value="{{ $campaign['class'] }}">{{ $campaign['name'] }}</option>
         @endforeach
     </select>
 </div>

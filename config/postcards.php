@@ -11,7 +11,10 @@ return [
     */
 
     'campaigns' => [
-        \App\Postcards\Campaigns\BanFossilFuelAdvertisements::class,
+        [
+            'name' => 'Ban Fossil Fuel Advertisements',
+            'class' => \App\Postcards\Campaigns\BanFossilFuelAdvertisements::class,
+        ]
     ]
 
 ];

@@ -7,11 +7,6 @@ namespace App\Postcards\Campaigns;
 class BanFossilFuelAdvertisements extends Campaign implements CampaignContract
 {
 
-    public function getName(): string
-    {
-       return 'Ban Fossil Fuel Advertisements';
-    }
-
     public function getRecipients(): array
     {
         return [

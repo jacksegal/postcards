@@ -38,7 +38,7 @@ class SendCampaignTest extends TestCase
             ->assertDontSee('OilCampaign');
 
         config()->set('postcards.campaigns', [
-            TestCampaign::class
+            ['name' => 'Test Campaign', 'class' =>TestCampaign::class]
         ]);
 
         Livewire::test(SendCampaign::class)
