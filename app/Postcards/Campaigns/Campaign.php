@@ -4,12 +4,14 @@ namespace App\Postcards\Campaigns;
 
 use App\Postcards\PdfHelper;
 use App\Postcards\PostcardSendHelper;
+use ClickSend\Model\PostRecipient;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Tests\TestCampaign;
 
-abstract class Campaign
+abstract class Campaign implements CampaignContract
 {
     public string $message = '';
 
@@ -17,20 +19,39 @@ abstract class Campaign
 
     private string $supporterDirectoryForSending = '';
 
-    public function send(array $supporter): void
+    public function createRecipients(): Collection
+    {
+        return collect($this->getRecipients())
+            ->map(function(array $recipientInfo){
+                $recipient = new PostRecipient();
+                $recipient->setAddressName($recipientInfo['name']);
+                $recipient->setAddressLine1($recipientInfo['address_line_1']);
+                $recipient->setAddressLine2($recipientInfo['address_line_2']);
+                $recipient->setaddressCity($recipientInfo['city']);
+                $recipient->setaddressState($recipientInfo['state']);
+                $recipient->setAddressPostalCode($recipientInfo['zip']);
+                $recipient->setAddressCountry($recipientInfo['country']);
+                $recipient->setReturnAddressId(1);
+                $recipient->setSchedule(0);
+
+                return $recipient;
+            });
+    }
+
+    public function send(array $supporterInfo): void
     {
         $pdfHelper = app(PdfHelper::class);
-        $this->supporterDirectoryForSending = $this->createDirectoryForSupporter($supporter['Supporter ID']);
+        $this->supporterDirectoryForSending = $this->createDirectoryForSupporter($supporterInfo['Supporter ID']);
 
         // Create back pdf
         $pdfHelper->createPostcardBack($this->supporterDirectoryForSending, $this->getPostcardBackHtml());
 
         // Copy given front PDF to current supporter files
-        $postcardFrontPdfPath = $this->getPostcardFrontPdfPath($supporter['Postcard Image']);
+        $postcardFrontPdfPath = $this->getPostcardFrontPdfPath($supporterInfo['Postcard Image']);
         File::put($this->supporterDirectoryForSending .'/postcard_front.pdf', File::get($postcardFrontPdfPath));
 
         $postcardSendHelper = new PostcardSendHelper;
-        $postcardSendHelper->print();
+        $postcardSendHelper->print($supporterInfo, $this->createRecipients());
 
         $this->postSendHook();
     }
