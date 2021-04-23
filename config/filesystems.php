@@ -49,7 +49,9 @@ return [
 
         'campaigns' => [
             'driver' => 'local',
-            'root' => storage_path('app/campaigns'),
+            'root' => storage_path('app/public/campaigns'),
+            'url' => env('APP_URL').'/storage/campaigns',
+            'visibility' => 'public',
         ],
 
         's3' => [

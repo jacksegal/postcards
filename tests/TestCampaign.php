@@ -24,7 +24,7 @@ class TestCampaign extends Campaign
                 'address_line_2' => 'Rue de la Loi',
                 'city' => 'Brussels',
                 'state' => 'Brussels',
-                'zip' => '1040',
+                'zip' => '11111',
                 'country' => 'Belgium',
             ]
         ];

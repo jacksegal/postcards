@@ -1,6 +1,6 @@
 <div>
     <form wire:submit.prevent="upload">
-        <input type="file" wire:model="participants">
+        <input type="file" wire:model="supportersUpload">
 
         @error('participants') <span class="error">{{ $message }}</span> @enderror
 
@@ -13,9 +13,11 @@
         <button type="submit">Upload Participants</button>
     </form>
 
-    <select wire:model="campaign">
+    <select wire:model="campaignClass">
         @foreach(config('postcards.campaigns') as $campaign)
             <option value="{{ $campaign['class'] }}">{{ $campaign['name'] }}</option>
         @endforeach
     </select>
+
+    <button wire:click="send">Send Campaign</button>
 </div>

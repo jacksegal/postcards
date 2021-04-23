@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "151cc832fc31c215460df844cfeabe80",
+    "content-hash": "d6330df0fb0a236d1c5e69a338f7ab4d",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1100,6 +1100,61 @@
                 "source": "https://github.com/guzzle/psr7/tree/1.8.1"
             },
             "time": "2021-03-21T16:25:00+00:00"
+        },
+        {
+            "name": "jacksegal/clicksend-php",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jacksegal/clicksend-php.git",
+                "reference": "8981dfe6ea355dbaf4d5bbdce1d900d57de327eb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jacksegal/clicksend-php/zipball/8981dfe6ea355dbaf4d5bbdce1d900d57de327eb",
+                "reference": "8981dfe6ea355dbaf4d5bbdce1d900d57de327eb",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "guzzlehttp/guzzle": "^7.1",
+                "php": ">=5.5"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "~2.12",
+                "phpunit/phpunit": "^4.8",
+                "squizlabs/php_codesniffer": "~2.6"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ClickSend\\": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Swagger and contributors",
+                    "homepage": "https://github.com/swagger-api/swagger-codegen"
+                }
+            ],
+            "homepage": "http://swagger.io",
+            "keywords": [
+                "api",
+                "php",
+                "sdk",
+                "swagger"
+            ],
+            "support": {
+                "source": "https://github.com/jacksegal/clicksend-php/tree/master"
+            },
+            "time": "2020-10-02T11:26:09+00:00"
         },
         {
             "name": "jaybizzle/crawler-detect",
@@ -8353,7 +8408,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "jacksegal/clicksend-php": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

@@ -4,6 +4,7 @@ namespace App\Postcards;
 
 use Dompdf\Dompdf;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class PdfHelper
 {
@@ -39,11 +40,20 @@ class PdfHelper
         File::put($this->path, $output);
     }
 
-    public function createPostcardBack(string $campaignSupporterDirectory, string $html): void
+    public function createPostcardBack(string $campaignSupporterDirectory, string $html): string
     {
         $this
             ->useHtml($html)
-            ->outputPath($campaignSupporterDirectory . '/postcard_back.pdf')
+            ->outputPath(Storage::disk('campaigns')->path($campaignSupporterDirectory) . '/postcard_back.pdf')
             ->create();
+
+        return Storage::disk('campaigns')->url($campaignSupporterDirectory . '/postcard_back.pdf');
+    }
+
+    public function getPostcardFront(string $supporterCampaignDirectory, string $postcardFrontName): string
+    {
+        File::put(Storage::disk('campaigns')->path($supporterCampaignDirectory .'/postcard_front.pdf'), file_get_contents(asset('pdfs/'.$postcardFrontName.'.pdf')));
+
+        return Storage::disk('campaigns')->url($supporterCampaignDirectory .'/postcard_front.pdf');
     }
 }

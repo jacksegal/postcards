@@ -6,18 +6,14 @@ use App\Postcards\PdfHelper;
 use App\Postcards\PostcardSendHelper;
 use ClickSend\Model\PostRecipient;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Tests\TestCampaign;
 
 abstract class Campaign implements CampaignContract
 {
-    public string $message = '';
 
-    private string $campaignDirectoryForSending = '';
-
-    private string $supporterDirectoryForSending = '';
+    private string $campaignDirectory = '';
 
     public function createRecipients(): Collection
     {
@@ -41,18 +37,18 @@ abstract class Campaign implements CampaignContract
     public function send(array $supporterInfo): void
     {
         $pdfHelper = app(PdfHelper::class);
-        $this->supporterDirectoryForSending = $this->createDirectoryForSupporter($supporterInfo['Supporter ID']);
+        $supporterCampaignDirectory = $this->createDirectoryForSupporter($supporterInfo['Supporter ID']);
 
-        // Create back pdf
-        $pdfHelper->createPostcardBack($this->supporterDirectoryForSending, $this->getPostcardBackHtml());
+        // Create back pdf from message
+        $postcardBackPdfUrl = $pdfHelper->createPostcardBack($supporterCampaignDirectory, $this->getPostcardBackHtml($supporterInfo['Message']));
 
-        // Copy given front PDF to current supporter files
-        $postcardFrontPdfPath = $this->getPostcardFrontPdfPath($supporterInfo['Postcard Image']);
-        File::put($this->supporterDirectoryForSending .'/postcard_front.pdf', File::get($postcardFrontPdfPath));
+        // Get front pdf by supporter info
+        $postcardFrontPdfUrl = $pdfHelper->getPostcardFront($supporterCampaignDirectory, $supporterInfo['Postcard Image']);
 
-        $postcardSendHelper = new PostcardSendHelper;
-        $postcardSendHelper->print($supporterInfo, $this->createRecipients());
+        $postcardSendHelper = app(PostcardSendHelper::class);
+        $postcardSendHelper->send($supporterInfo, $this->createRecipients(), [$postcardFrontPdfUrl, $postcardBackPdfUrl]);
 
+        // Hook to define custom actions that should run after every sent prostcard
         $this->postSendHook();
     }
 
@@ -61,26 +57,21 @@ abstract class Campaign implements CampaignContract
 
     }
 
-    public function getPostcardBackHtml(): string
+    public function getPostcardBackHtml(string $message): string
     {
-        return view('pdf.template-default-back', ['message' => $this->message])->render();
-    }
-
-    public function getPostcardFrontPdfPath(string $postcardFrontName): string
-    {
-        return public_path('pdfs/'.$postcardFrontName.'.pdf');
+        return view('pdf.template-default-back', ['message' => $message])->render();
     }
 
     public function getCampaignDirectoryName(): string
     {
-        return $this->campaignDirectoryForSending = now()->format('Y-m-d__H-i-s') . '_' . Str::of(TestCampaign::class)->afterLast('\\')->snake();
+        return $this->campaignDirectory = now()->format('Y-m-d__H-i-s') . '_' . Str::of(TestCampaign::class)->afterLast('\\')->snake();
     }
 
     public function createDirectoryForSupporter(string $supporterId): string
     {
         Storage::disk('campaigns')->makeDirectory($this->getCampaignDirectoryName() . '/' . $supporterId);
 
-        return Storage::disk('campaigns')->path($this->campaignDirectoryForSending . '/' . $supporterId);
+        return $this->campaignDirectory . '/' . $supporterId;
     }
 
 }

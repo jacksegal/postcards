@@ -3,14 +3,32 @@
 
 namespace App\Postcards;
 
-
-use Illuminate\Support\Facades\Http;
+use ClickSend\Api\PostPostcardApi;
+use ClickSend\Model\PostPostcard;
+use Exception;
+use Illuminate\Support\Collection;
 
 class PostcardSendHelper
 {
 
-    public function print()
+    public function send(array $supporterInfo, Collection $recipients, array $postcardCoverUrls): void
     {
-        Http::post('click-and-send');
+        $apiInstance = app(PostPostcardApi::class);
+        $PostPostcard = new PostPostcard();
+
+        // Front and back cover
+        $PostPostcard->setFileUrls([$postcardCoverUrls[0], $postcardCoverUrls[1]]);
+
+        // Send it
+        $PostPostcard->setRecipients($recipients->toArray());
+
+        try {
+            $response = $apiInstance->postPostcardsSendPost($PostPostcard);
+
+            info('response '. (string)$response);
+        } catch (Exception $e) {
+            info('Exception when calling PostPostcardApi->postPostcardsSendPost: ' . $e->getMessage() . PHP_EOL);
+        }
+
     }
 }
