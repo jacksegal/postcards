@@ -98,7 +98,6 @@ class SendCampaignTest extends TestCase
     {
         // Arrange
         $this->travelTo(Carbon::createFromFormat('Y-m-d h:i A', '2021-01-01 00:00 PM'),);
-        $fakePostcardHelper = new FakePostcardHelper();
         $this->app->instance(PostcardSendHelper::class, new FakePostcardHelper());
 
         // Act
@@ -107,10 +106,12 @@ class SendCampaignTest extends TestCase
             ->set('campaignClass', TestCampaign::class)
             ->call('send');
 
+        $fakePostcardHelper = app(PostcardSendHelper::class);
+
         $fakePostcardHelper->assertPostcardSent(
             $this->getSupporterInfo(),
             (new TestCampaign)->createRecipients(),
-            $this->getPostcardCoverPaths()
+            $this->getPostcardCoverUrls()
         );
 
     }
@@ -127,11 +128,11 @@ Jack Segal"', 'Salutation' => 'Dear Ms von der Leyen', 'Organization' => 'Presid
         ];
     }
 
-    private function getPostcardCoverPaths(): array
+    private function getPostcardCoverUrls(): array
     {
         return [
-            "/Users/christophrumpel/Sites/Clients/c6digital/postcards/public/pdfs/postcard-front-bycatch.pdf",
-            "/Users/christophrumpel/Sites/Clients/c6digital/postcards/storage/app/campaigns/2021-01-01__12-00-00_test_campaign/194764356/postcard_back.pdf"
+            Storage::disk('campaigns')->url('2021-01-01__12-00-00_test_campaign/194764356/postcard_front.pdf'),
+            Storage::disk('campaigns')->url('2021-01-01__12-00-00_test_campaign/194764356/postcard_back.pdf'),
         ];
     }
 
