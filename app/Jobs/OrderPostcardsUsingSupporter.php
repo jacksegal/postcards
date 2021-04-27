@@ -14,7 +14,13 @@ class OrderPostcardsUsingSupporter implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(public array $supporterInfo, public $campaign){}
+    public array $supporterInfo;
+    public $campaign;
+
+    public function __construct(array $supporterInfo, $campaign){
+        $this->campaign = $campaign;
+        $this->supporterInfo = $supporterInfo;
+    }
 
     public function handle(): void
     {
