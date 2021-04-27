@@ -40,7 +40,7 @@ class SendCampaign extends Component
                 $campaign->send($supporterInfo);
             });
 
-        // Hook to define custom actions that should run after every sent prostcard
+        // Hook to define custom actions that should run after every sent postcard
         $campaign->postSendHook();
     }
 }
