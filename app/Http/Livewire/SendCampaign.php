@@ -39,5 +39,8 @@ class SendCampaign extends Component
             ->each(function (array $supporterInfo) use ($campaign) {
                 $campaign->send($supporterInfo);
             });
+
+        // Hook to define custom actions that should run after every sent prostcard
+        $campaign->postSendHook();
     }
 }

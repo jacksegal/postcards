@@ -35,11 +35,7 @@ abstract class Campaign implements CampaignContract
 
     public function send(array $supporterInfo): void
     {
-
         dispatch(new OrderPostcardsUsingSupporter($supporterInfo, $this));
-
-        // Hook to define custom actions that should run after every sent prostcard
-        $this->postSendHook();
     }
 
     public function postSendHook(): void
