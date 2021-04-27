@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 class PostcardSendHelper
 {
 
-    public function send(array $supporterInfo, Collection $recipients, array $postcardCoverUrls): void
+    public function send(Collection $recipients, array $postcardCoverUrls): void
     {
         $apiInstance = app(PostPostcardApi::class);
         $PostPostcard = new PostPostcard();

@@ -3,10 +3,12 @@
 namespace Tests\Feature\Livewire;
 
 use App\Http\Livewire\SendCampaign;
+use App\Jobs\OrderPostcardsUsingSupporter;
 use App\Postcards\PostcardSendHelper;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
@@ -109,23 +111,26 @@ class SendCampaignTest extends TestCase
         $fakePostcardHelper = app(PostcardSendHelper::class);
 
         $fakePostcardHelper->assertPostcardSent(
-            $this->getSupporterInfo(),
             (new TestCampaign)->createRecipients(),
             $this->getPostcardCoverUrls()
         );
 
     }
 
-    private function getSupporterInfo(): array
+    /** @test **/
+    public function it_dispatches_jobs_for_every_supporter_postcard(): void
     {
-        return [
-            'Supporter ID' => '194764356', 'Supporter Email' => 'jack@c6digital.io', 'Date Sent' => '05/04/2021 04:01', 'Subject' => 'Ban fossil fuel ads!', 'Message' => '"Dear Ms von der Leyen,
+        // Arrange
+        Queue::fake();
 
-Please ban fossil fuel ads now!
+        // Act
+        Livewire::test(SendCampaign::class)
+            ->set('supportersUploadFilePath', base_path('tests/dummy-supporters.csv'))
+            ->set('campaignClass', TestCampaign::class)
+            ->call('send');
 
-Thank you,
-Jack Segal"', 'Salutation' => 'Dear Ms von der Leyen', 'Organization' => 'President of the European Commission', 'Position Held' => '', 'Contact Title' => 'Ms', 'Contact First Name' => 'Ursula', 'Contact Last Name' => 'von der Leyen', 'Supporter Title' => '', 'Supporter First Name' => 'Jack', 'Supporter Last Name' => 'Segal', 'Supporter Address 1' => '148 Rogate House', 'Supporter Address 2' => 'London', 'Supporter City' => '', 'Supporter Region' => '', 'Supporter Postal Code' => 'E5 8QX', 'Supporter Country' => '', 'Postcard Image' => 'postcard-front-bycatch'
-        ];
+        // Assert
+        Queue::assertPushed(OrderPostcardsUsingSupporter::class, 2);
     }
 
     private function getPostcardCoverUrls(): array

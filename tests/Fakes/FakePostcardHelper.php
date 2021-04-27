@@ -10,13 +10,13 @@ class FakePostcardHelper
 {
     private array $sentPostcards = [];
 
-    public function send(array $supporterInfo, Collection $recipients, array $postcardCoverPaths): void
+    public function send(Collection $recipients, array $postcardCoverPaths): void
     {
-        $this->sentPostcards[] = [$supporterInfo, $recipients, $postcardCoverPaths];
+        $this->sentPostcards[] = [$recipients, $postcardCoverPaths];
     }
 
-    public function assertPostcardSent(array $supporterInfo, Collection $recipients, array $postcardCoverPaths): void
+    public function assertPostcardSent(Collection $recipients, array $postcardCoverPaths): void
     {
-        TestCase::assertEquals([$supporterInfo, $recipients, $postcardCoverPaths], $this->sentPostcards[0]);
+        TestCase::assertEquals([$recipients, $postcardCoverPaths], $this->sentPostcards[0]);
     }
 }

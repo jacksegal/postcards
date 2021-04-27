@@ -2,8 +2,7 @@
 
 namespace App\Postcards\Campaigns;
 
-use App\Postcards\PdfHelper;
-use App\Postcards\PostcardSendHelper;
+use App\Jobs\OrderPostcardsUsingSupporter;
 use ClickSend\Model\PostRecipient;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
@@ -36,17 +35,8 @@ abstract class Campaign implements CampaignContract
 
     public function send(array $supporterInfo): void
     {
-        $pdfHelper = app(PdfHelper::class);
-        $supporterCampaignDirectory = $this->createDirectoryForSupporter($supporterInfo['Supporter ID']);
 
-        // Create back pdf from message
-        $postcardBackPdfUrl = $pdfHelper->createPostcardBack($supporterCampaignDirectory, $this->getPostcardBackHtml($supporterInfo['Message']));
-
-        // Get front pdf by supporter info
-        $postcardFrontPdfUrl = $pdfHelper->getPostcardFront($supporterCampaignDirectory, $supporterInfo['Postcard Image']);
-
-        $postcardSendHelper = app(PostcardSendHelper::class);
-        $postcardSendHelper->send($supporterInfo, $this->createRecipients(), [$postcardFrontPdfUrl, $postcardBackPdfUrl]);
+        dispatch(new OrderPostcardsUsingSupporter($supporterInfo, $this));
 
         // Hook to define custom actions that should run after every sent prostcard
         $this->postSendHook();

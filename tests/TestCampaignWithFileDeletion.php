@@ -20,4 +20,9 @@ class TestCampaignWithFileDeletion extends Campaign
     {
         Storage::disk('campaigns')->deleteDirectory($this->getCampaignDirectoryName());
     }
+
+    public function getRecipients(): array
+    {
+        return [];
+    }
 }
