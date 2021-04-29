@@ -3,8 +3,10 @@
 namespace App\Postcards\Campaigns;
 
 use App\Jobs\OrderPostcardsUsingSupporter;
+use App\Postcards\PdfHelper;
 use ClickSend\Model\PostRecipient;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Tests\TestCampaign;
@@ -43,9 +45,44 @@ abstract class Campaign implements CampaignContract
 
     }
 
+    public function getPostcardFrontHtml(array $supporterInfo): string
+    {
+        return '';
+    }
+
     public function getPostcardBackHtml(array $supporterInfo): string
     {
         return view('pdf.template-default-back', ['message' => $supporterInfo['Message']])->render();
+    }
+
+    public function createPostcardFrontPdf(string $supporterCampaignDirectory, string $html, array $supporterInfo): string
+    {
+        $pdfHelper = app(PdfHelper::class);
+
+        if(empty($html)) {
+            File::put(Storage::disk('campaigns')->path($supporterCampaignDirectory .'/postcard_front.pdf'), file_get_contents(asset('pdfs/defaults/ban-fossil-fuel-advertisements/'.$supporterInfo['Postcard Image'].'.pdf')));
+
+            return Storage::disk('campaigns')->url($supporterCampaignDirectory .'/postcard_front.pdf');
+        }
+
+        $pdfHelper
+            ->useHtml($html)
+            ->outputPath(Storage::disk('campaigns')->path($supporterCampaignDirectory) . '/postcard_back.pdf')
+            ->create();
+
+        return Storage::disk('campaigns')->url($supporterCampaignDirectory . '/postcard_back.pdf');
+    }
+
+    public function createPostcardBackPdf(string $supporterCampaignDirectory, string $html, array $supporterInfo): string
+    {
+        $pdfHelper = app(PdfHelper::class);
+
+        $pdfHelper
+            ->useHtml($html)
+            ->outputPath(Storage::disk('campaigns')->path($supporterCampaignDirectory) . '/postcard_back.pdf')
+            ->create();
+
+        return Storage::disk('campaigns')->url($supporterCampaignDirectory . '/postcard_back.pdf');
     }
 
     public function getCampaignDirectoryName(): string

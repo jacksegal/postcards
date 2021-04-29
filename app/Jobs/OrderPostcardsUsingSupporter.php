@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Postcards\PdfHelper;
 use App\Postcards\PostcardSendHelper;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -24,14 +23,17 @@ class OrderPostcardsUsingSupporter implements ShouldQueue
 
     public function handle(): void
     {
-        $pdfHelper = app(PdfHelper::class);
         $supporterCampaignDirectory = $this->campaign->createDirectoryForSupporter($this->supporterInfo);
 
-        // Create back pdf from message
-        $postcardBackPdfUrl = $pdfHelper->createPostcardBack($supporterCampaignDirectory, $this->campaign->getPostcardBackHtml($this->supporterInfo));
+        // Create front pdf for postcard
+        //$postcardFrontPdfUrl = $pdfHelper->getPostcardFront($supporterCampaignDirectory, $this->supporterInfo['Postcard Image']);
+        $postcardFrontPdfUrl = $this->campaign->createPostcardFrontPdf($supporterCampaignDirectory, $this->campaign->getPostcardFrontHtml($this->supporterInfo), $this->supporterInfo);
 
-        // Get front pdf by supporter info
-        $postcardFrontPdfUrl = $pdfHelper->getPostcardFront($supporterCampaignDirectory, $this->supporterInfo['Postcard Image']);
+
+        // Create back pdf for postcard
+        //$postcardBackPdfUrl = $pdfHelper->createPostcardBack($supporterCampaignDirectory, $this->campaign->getPostcardBackHtml($this->supporterInfo));
+        $postcardBackPdfUrl = $this->campaign->createPostcardBackPdf($supporterCampaignDirectory, $this->campaign->getPostcardBackHtml($this->supporterInfo), $this->supporterInfo);
+
 
         $postcardSendHelper = app(PostcardSendHelper::class);
         $postcardSendHelper->send($this->campaign->createRecipients(), [$postcardFrontPdfUrl, $postcardBackPdfUrl]);
