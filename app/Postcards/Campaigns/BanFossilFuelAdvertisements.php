@@ -18,15 +18,10 @@ class BanFossilFuelAdvertisements extends Campaign
                 'state' => 'Brussels',
                 'zip' => '1040',
                 'country' => 'Belgium',
+                'return_address_id' => 1,
+                'schedule' => 0,
             ]
         ];
     }
 
-    public function getCovers(): array
-    {
-        return [
-            'path-to-front-pdf',
-            'path-to-back-pdf',
-        ];
-    }
 }

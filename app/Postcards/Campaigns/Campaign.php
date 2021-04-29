@@ -26,8 +26,8 @@ abstract class Campaign implements CampaignContract
                 $recipient->setaddressState($recipientInfo['state']);
                 $recipient->setAddressPostalCode($recipientInfo['zip']);
                 $recipient->setAddressCountry($recipientInfo['country']);
-                $recipient->setReturnAddressId(1);
-                $recipient->setSchedule(0);
+                $recipient->setReturnAddressId($recipientInfo['return_address_id']);
+                $recipient->setSchedule($recipientInfo['schedule']);
 
                 return $recipient;
             });
@@ -43,9 +43,9 @@ abstract class Campaign implements CampaignContract
 
     }
 
-    public function getPostcardBackHtml(string $message): string
+    public function getPostcardBackHtml(array $supporterInfo): string
     {
-        return view('pdf.template-default-back', ['message' => $message])->render();
+        return view('pdf.template-default-back', ['message' => $supporterInfo['Message']])->render();
     }
 
     public function getCampaignDirectoryName(): string

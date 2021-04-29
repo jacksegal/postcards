@@ -52,7 +52,7 @@ class PdfHelper
 
     public function getPostcardFront(string $supporterCampaignDirectory, string $postcardFrontName): string
     {
-        File::put(Storage::disk('campaigns')->path($supporterCampaignDirectory .'/postcard_front.pdf'), file_get_contents(asset('pdfs/'.$postcardFrontName.'.pdf')));
+        File::put(Storage::disk('campaigns')->path($supporterCampaignDirectory .'/postcard_front.pdf'), file_get_contents(asset('pdfs/defaults/ban-fossil-fuel-advertisements/'.$postcardFrontName.'.pdf')));
 
         return Storage::disk('campaigns')->url($supporterCampaignDirectory .'/postcard_front.pdf');
     }
