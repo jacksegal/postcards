@@ -53,11 +53,17 @@ abstract class Campaign implements CampaignContract
         return $this->campaignDirectory = now()->format('Y-m-d__H-i-s') . '_' . Str::of(TestCampaign::class)->afterLast('\\')->snake();
     }
 
-    public function createDirectoryForSupporter(string $supporterId): string
+    public function getSupporterDirectoryName(array $supporterInfo): string
     {
-        Storage::disk('campaigns')->makeDirectory($this->getCampaignDirectoryName() . '/' . $supporterId);
+        return $supporterInfo['Supporter ID'];
+    }
 
-        return $this->campaignDirectory . '/' . $supporterId;
+    public function createDirectoryForSupporter(array $supporterInfo): string
+    {
+        $supporterDirectoryName = $this->getSupporterDirectoryName($supporterInfo);
+        Storage::disk('campaigns')->makeDirectory($this->getCampaignDirectoryName() . '/' . $supporterDirectoryName);
+
+        return $this->campaignDirectory . '/' . $supporterDirectoryName;
     }
 
 }
