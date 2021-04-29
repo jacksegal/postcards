@@ -11,27 +11,33 @@ use Illuminate\Support\Str;
 
 class GeneratePostcardFrontPdf extends Command
 {
-    protected $signature = 'postcards:generate-front-pdf {image}';
+    protected $signature = 'postcards:generate-front-pdf {image} {--campaign-name=}';
 
     protected $description = 'Generate a PDF for the front of a postcard';
 
     public function handle(): void
     {
 
-        try {
-            [$imageName, $imageUrl] = $this->getImageIfGiven($this->argument('image'));
-        } catch (Exception $exception) {
-            $this->error('Image does not exist locally or as external URL');
-            exit;
+        if($this->option('campaign-name')) {
+
+            try {
+                [$imageName, $imageUrl] = $this->getImageIfGiven($this->argument('image'));
+            } catch (Exception $exception) {
+                $this->error('Image does not exist locally or as external URL');
+                exit;
+            }
+
+            $html = view('pdf.template-default-front', ['image' => $imageUrl])->render();
+            File::makeDirectory(public_path('pdfs/static/' . $this->option('campaign-name')));
+            $pdfPath = public_path('pdfs/static/' . $this->option('campaign-name') . '/' . $imageName . '.pdf');
+
+            $pdfHelper = new PdfHelper();
+            $pdfHelper->useHtml($html)
+                ->outputPath($pdfPath)
+                ->create();
         }
 
-        $html = view('pdf.template-default-front', ['image' => $imageUrl])->render();
-        $pdfPath = public_path('pdfs/' . $imageName . '.pdf');
-
-        $pdfHelper = new PdfHelper();
-        $pdfHelper->useHtml($html)
-            ->outputPath($pdfPath)
-            ->create();
+        $this->error('Campaign name options is missing');
 
     }
 

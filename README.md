@@ -25,15 +25,15 @@ public function postSendHook(): void
 
 We created an artisan command to generate those PDFs. If the image file will be stored locally, put it in the `publich/images/` folder. Then you can generate the PDF like this:
 ```shell
-php artisan postcards:generate-front-pdf postcards-front-climate-strike.png
+php artisan postcards:generate-front-pdf postcards-front-climate-strike.png --campaign-name=my-campaign
 ```
 
 This command will look for the image at `.../public/images/postcards-front-climate-strike.png` and if given, will create a postcard front PDF from it.
-The new pdf can now be found at `.../public/pdfs/`.
+The new pdf can now be found at `.../public/pdfs/static/my-campaign`.
 
 If the image is stored online, use the URL instead of the image name like:
 ```shell
-php artisan postcards:generate-front-pdf https://link-to.my/image
+php artisan postcards:generate-front-pdf https://link-to.my/image --campaign-name=my-campaign
 ```
 
-The new pdf can now be found at `.../public/pdfs/`.
+The new pdf can now be found at `.../public/pdfs/static/my-campaign`.

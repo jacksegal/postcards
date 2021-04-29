@@ -62,7 +62,7 @@ abstract class Campaign implements CampaignContract
         $pdfHelper = app(PdfHelper::class);
 
         if(empty($html)) {
-            File::put(Storage::disk('campaigns')->path($supporterCampaignDirectory .'/postcard_front.pdf'), file_get_contents(asset('pdfs/defaults/ban-fossil-fuel-advertisements/'.$supporterInfo['Postcard Image'].'.pdf')));
+            File::put(Storage::disk('campaigns')->path($supporterCampaignDirectory .'/postcard_front.pdf'), file_get_contents(asset('pdfs/static/ban-fossil-fuel-advertisements/'.$supporterInfo['Postcard Image'].'.pdf')));
 
             return Storage::disk('campaigns')->url($supporterCampaignDirectory .'/postcard_front.pdf');
         }
