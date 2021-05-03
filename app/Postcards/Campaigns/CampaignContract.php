@@ -9,7 +9,7 @@ use Illuminate\Support\Collection;
 interface CampaignContract
 {
 
-    public function getRecipients(): array;
+    public function getRecipients(array $supporterInfo = []): array;
 
     public function createRecipients(): Collection;
 

@@ -7,7 +7,7 @@ namespace App\Postcards\Campaigns;
 class BanFossilFuelAdvertisements extends Campaign
 {
 
-    public function getRecipients(): array
+    public function getRecipients(array $supporterInfo = []): array
     {
         return [
             [

@@ -16,11 +16,10 @@ abstract class Campaign implements CampaignContract
 
     private string $campaignDirectory = '';
 
-    public function createRecipients(array $supporterInfo = []): Collection
+    public function createRecipients(): Collection
     {
-        $recipients = $supporterInfo['Recipients'] ?? $this->getRecipients();
 
-        return collect($recipients)
+        return collect( $this->getRecipients())
             ->map(function(array $recipientInfo){
                 $recipient = new PostRecipient();
                 $recipient->setAddressName($recipientInfo['name']);

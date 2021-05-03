@@ -15,7 +15,7 @@ class TestCampaign extends Campaign
         return $this->name;
     }
 
-    public function getRecipients(): array
+    public function getRecipients(array $supporterInfo = []): array
     {
         return [
             [
