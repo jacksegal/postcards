@@ -93,7 +93,7 @@ abstract class Campaign implements CampaignContract
 
     public function getSupporterDirectoryName(array $supporterInfo): string
     {
-        return $supporterInfo['Supporter ID'];
+        return $supporterInfo['Supporter ID'] . '-' . time() . '-' .  Str::random(3);
     }
 
     public function createDirectoryForSupporter(array $supporterInfo): string
