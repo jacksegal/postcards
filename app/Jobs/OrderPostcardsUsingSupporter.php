@@ -36,6 +36,6 @@ class OrderPostcardsUsingSupporter implements ShouldQueue
 
 
         $postcardSendHelper = app(PostcardSendHelper::class);
-        $postcardSendHelper->send($this->campaign->createRecipients(), [$postcardFrontPdfUrl, $postcardBackPdfUrl]);
+        $postcardSendHelper->send($this->campaign->createRecipients($this->supporterInfo), [$postcardFrontPdfUrl, $postcardBackPdfUrl]);
     }
 }

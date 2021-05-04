@@ -14,12 +14,12 @@ use Tests\TestCampaign;
 abstract class Campaign implements CampaignContract
 {
 
-    private string $campaignDirectory = '';
+    protected string $campaignDirectory = '';
 
-    public function createRecipients(): Collection
+    public function createRecipients(array $supporterInfo = []): Collection
     {
 
-        return collect( $this->getRecipients())
+        return collect( $this->getRecipients($supporterInfo))
             ->map(function(array $recipientInfo){
                 $recipient = new PostRecipient();
                 $recipient->setAddressName($recipientInfo['name']);
