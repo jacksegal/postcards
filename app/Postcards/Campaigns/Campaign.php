@@ -16,10 +16,12 @@ abstract class Campaign implements CampaignContract
 
     protected string $campaignDirectory = '';
 
-    public function createRecipients(array $supporterInfo = []): Collection
+    protected array $supporterInfo;
+
+    public function createRecipients(): Collection
     {
 
-        return collect( $this->getRecipients($supporterInfo))
+        return collect( $this->getRecipients())
             ->map(function(array $recipientInfo){
                 $recipient = new PostRecipient();
                 $recipient->setAddressName($recipientInfo['name']);
@@ -38,6 +40,8 @@ abstract class Campaign implements CampaignContract
 
     public function send(array $supporterInfo): void
     {
+        $this->supporterInfo = $supporterInfo;
+
         dispatch(new OrderPostcardsUsingSupporter($supporterInfo, $this));
     }
 
@@ -51,14 +55,14 @@ abstract class Campaign implements CampaignContract
         return '';
     }
 
-    public function getPostcardBackHtml(array $supporterInfo): string
+    public function getPostcardBackHtml(): string
     {
-        return view('pdf.template-default-back', ['message' => $supporterInfo['Message']])->render();
+        return view('pdf.template-default-back', ['message' => $this->supporterInfo['Message']])->render();
     }
 
-    public function createPostcardFrontPdf(string $supporterCampaignDirectory, array $supporterInfo): string
+    public function createPostcardFrontPdf(string $supporterCampaignDirectory): string
     {
-        switch ($supporterInfo['Postcard Image']) {
+        switch ($this->supporterInfo['Postcard Image']) {
             case 'image-1':
                 $frontPdfFilename = 'postcard-front-bycatch.pdf';
                 break;
@@ -77,9 +81,9 @@ abstract class Campaign implements CampaignContract
         return Storage::disk('campaigns')->url($supporterCampaignDirectory .'/postcard_front.pdf');
     }
 
-    public function createPostcardBackPdf(string $supporterCampaignDirectory, array $supporterInfo): string
+    public function createPostcardBackPdf(string $supporterCampaignDirectory): string
     {
-        $html = $this->getPostcardBackHtml($supporterInfo);
+        $html = $this->getPostcardBackHtml();
         $pdfHelper = app(PdfHelper::class);
         $pdfHelper
             ->useHtml($html)
@@ -94,14 +98,14 @@ abstract class Campaign implements CampaignContract
         return $this->campaignDirectory = now()->format('Y-m-d__H-i-s') . '_' . Str::of(TestCampaign::class)->afterLast('\\')->snake();
     }
 
-    public function getSupporterDirectoryName(array $supporterInfo): string
+    public function getSupporterDirectoryName(): string
     {
-        return $supporterInfo['Supporter ID'] . '-' . time() . '-' .  Str::random(3);
+        return $this->supporterInfo['Supporter ID'] . '-' . time() . '-' .  Str::random(3);
     }
 
-    public function createDirectoryForSupporter(array $supporterInfo): string
+    public function createDirectoryForSupporter(): string
     {
-        $supporterDirectoryName = $this->getSupporterDirectoryName($supporterInfo);
+        $supporterDirectoryName = $this->getSupporterDirectoryName();
         Storage::disk('campaigns')->makeDirectory($this->getCampaignDirectoryName() . '/' . $supporterDirectoryName);
 
         return $this->campaignDirectory . '/' . $supporterDirectoryName;

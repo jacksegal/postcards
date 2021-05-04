@@ -9,12 +9,12 @@ use App\Postcards\Campaigns\Campaign;
 class TestCampaign extends Campaign
 {
 
-    public function getSupporterDirectoryName(array $supporterInfo): string
+    public function getSupporterDirectoryName(): string
     {
-        return $supporterInfo['Supporter ID'];
+        return $this->supporterInfo['Supporter ID'];
     }
 
-    public function getRecipients(array $supporterInfo = []): array
+    public function getRecipients(): array
     {
         return [
             [
