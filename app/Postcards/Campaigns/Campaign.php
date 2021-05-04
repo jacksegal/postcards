@@ -79,7 +79,7 @@ abstract class Campaign implements CampaignContract
 
     public function createPostcardBackPdf(string $supporterCampaignDirectory, array $supporterInfo): string
     {
-        $html = view('pdf.template-default-back', ['message' => $supporterInfo['Message']])->render();
+        $html = $this->getPostcardBackHtml($supporterInfo);
         $pdfHelper = app(PdfHelper::class);
         $pdfHelper
             ->useHtml($html)
