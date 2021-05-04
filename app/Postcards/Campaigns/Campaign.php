@@ -56,28 +56,31 @@ abstract class Campaign implements CampaignContract
         return view('pdf.template-default-back', ['message' => $supporterInfo['Message']])->render();
     }
 
-    public function createPostcardFrontPdf(string $supporterCampaignDirectory, string $html, array $supporterInfo): string
+    public function createPostcardFrontPdf(string $supporterCampaignDirectory, array $supporterInfo): string
     {
-        $pdfHelper = app(PdfHelper::class);
-
-        if(empty($html)) {
-            File::put(Storage::disk('campaigns')->path($supporterCampaignDirectory .'/postcard_front.pdf'), file_get_contents(asset('pdfs/static/ban-fossil-fuel-advertisements/'.$supporterInfo['Postcard Image'].'.pdf')));
-
-            return Storage::disk('campaigns')->url($supporterCampaignDirectory .'/postcard_front.pdf');
+        switch ($supporterInfo['Postcard Image']) {
+            case 'image-1':
+                $frontPdfFilename = 'postcard-front-bycatch.pdf';
+                break;
+            case 'image-2':
+                $frontPdfFilename = 'postcard-front-climate-strike.pdf';
+                break;
+            case 'image-3':
+                $frontPdfFilename = 'postcard-front-deep-sea-mining.pdf';
+                break;
+            default:
+                $frontPdfFilename = 'postcard-front-bycatch.pdf';
         }
 
-        $pdfHelper
-            ->useHtml($html)
-            ->outputPath(Storage::disk('campaigns')->path($supporterCampaignDirectory) . '/postcard_back.pdf')
-            ->create();
+        File::put(Storage::disk('campaigns')->path($supporterCampaignDirectory .'/postcard_front.pdf'), file_get_contents(asset('pdfs/static/ban-fossil-fuel-advertisements/'.$frontPdfFilename)));
 
-        return Storage::disk('campaigns')->url($supporterCampaignDirectory . '/postcard_back.pdf');
+        return Storage::disk('campaigns')->url($supporterCampaignDirectory .'/postcard_front.pdf');
     }
 
-    public function createPostcardBackPdf(string $supporterCampaignDirectory, string $html, array $supporterInfo): string
+    public function createPostcardBackPdf(string $supporterCampaignDirectory, array $supporterInfo): string
     {
+        $html = view('pdf.template-default-back', ['message' => $supporterInfo['Message']])->render();
         $pdfHelper = app(PdfHelper::class);
-
         $pdfHelper
             ->useHtml($html)
             ->outputPath(Storage::disk('campaigns')->path($supporterCampaignDirectory) . '/postcard_back.pdf')

@@ -26,14 +26,10 @@ class OrderPostcardsUsingSupporter implements ShouldQueue
         $supporterCampaignDirectory = $this->campaign->createDirectoryForSupporter($this->supporterInfo);
 
         // Create front pdf for postcard
-        //$postcardFrontPdfUrl = $pdfHelper->getPostcardFront($supporterCampaignDirectory, $this->supporterInfo['Postcard Image']);
-        $postcardFrontPdfUrl = $this->campaign->createPostcardFrontPdf($supporterCampaignDirectory, $this->campaign->getPostcardFrontHtml($this->supporterInfo), $this->supporterInfo);
-
+        $postcardFrontPdfUrl = $this->campaign->createPostcardFrontPdf($supporterCampaignDirectory, $this->supporterInfo);
 
         // Create back pdf for postcard
-        //$postcardBackPdfUrl = $pdfHelper->createPostcardBack($supporterCampaignDirectory, $this->campaign->getPostcardBackHtml($this->supporterInfo));
-        $postcardBackPdfUrl = $this->campaign->createPostcardBackPdf($supporterCampaignDirectory, $this->campaign->getPostcardBackHtml($this->supporterInfo), $this->supporterInfo);
-
+        $postcardBackPdfUrl = $this->campaign->createPostcardBackPdf($supporterCampaignDirectory, $this->supporterInfo);
 
         $postcardSendHelper = app(PostcardSendHelper::class);
         $postcardSendHelper->send($this->campaign->createRecipients($this->supporterInfo), [$postcardFrontPdfUrl, $postcardBackPdfUrl]);
