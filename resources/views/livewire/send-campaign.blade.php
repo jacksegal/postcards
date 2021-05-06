@@ -20,7 +20,8 @@
     <form wire:submit.prevent="send" class="space-y-8 divide-y divide-gray-200">
         <div class="space-y-8 divide-y divide-gray-200 sm:space-y-5">
             <div>
-                @error('supportersUpload')<div class="inline-block bg-red-300 text-red-900 px-4 mb-8">{{ $message }}</div> @enderror
+                @error('supportersUpload')
+                <div class="inline-block bg-red-300 text-red-900 px-4 mb-8">{{ $message }}</div> @enderror
                 @if (session()->has('message'))
                     <div class="inline-block bg-green-300 text-green-800 px-4 mb-8">
                         {{ session('message') }}
@@ -64,14 +65,17 @@
                                         <p class="pl-1">or drag and drop</p>
                                     </div>
                                     <p class="text-xs text-gray-500">
-                                        (CSV)
+                                        @if($supportersUpload)
+                                            File ready:
+                                            "{{  $supportersUpload->getClientOriginalName() ?? $supportersUpload->getFilename() }}
+                                            "
+                                        @else
+                                            (CSV)
+                                        @endif
                                     </p>
                                 </div>
                             </div>
                         </div>
-                        @if($supportersUpload)
-                            File ready: "{{  $supportersUpload->getFilename() }}"
-                        @endif
                     </div>
                 </div>
             </div>
