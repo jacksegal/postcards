@@ -20,22 +20,7 @@ use Tests\TestCase;
 class SendCampaignTest extends TestCase
 {
 
-    /** @test * */
-    public function it_uploads_csv_file_to_uploads_storage(): void
-    {
-        Carbon::setTestNow(now());
 
-        Storage::fake('uploads');
-
-        $file = UploadedFile::fake()->create('participants.csv');
-
-        Livewire::test(SendCampaign::class)
-            ->set('supportersUpload', $file)
-            ->call('upload')
-            ->assertSee('The file was successfully uploaded.');
-
-        Storage::disk('uploads')->assertExists(now()->format('Y-m-d__H-i-s') . '_supporters.csv');
-    }
 
     /** @test * */
     public function it_shows_campaigns_from_config_in_select(): void
@@ -61,6 +46,7 @@ class SendCampaignTest extends TestCase
 
         // Act
         Livewire::test(SendCampaign::class)
+            ->set('supportersUpload', UploadedFile::fake()->create('tests.csv'))
             ->set('supportersUploadFilePath', base_path('tests/dummy-supporters.csv'))
             ->set('campaignClass', TestCampaign::class)
             ->call('send');
@@ -83,6 +69,7 @@ class SendCampaignTest extends TestCase
 
         // Act
         Livewire::test(SendCampaign::class)
+            ->set('supportersUpload', UploadedFile::fake()->create('tests.csv'))
             ->set('supportersUploadFilePath', base_path('tests/dummy-supporters.csv'))
             ->set('campaignClass', TestCampaignWithFileDeletion::class)
             ->call('send');
@@ -104,6 +91,7 @@ class SendCampaignTest extends TestCase
 
         // Act
         Livewire::test(SendCampaign::class)
+            ->set('supportersUpload', UploadedFile::fake()->create('tests.csv'))
             ->set('supportersUploadFilePath', base_path('tests/dummy-supporters.csv'))
             ->set('campaignClass', TestCampaign::class)
             ->call('send');
@@ -125,8 +113,8 @@ class SendCampaignTest extends TestCase
 
         // Act
         Livewire::test(SendCampaign::class)
-            ->set('supportersUploadFilePath', base_path('tests/dummy-supporters.csv'))
-            ->set('campaignClass', TestCampaign::class)
+            ->set('supportersUpload', UploadedFile::fake()->create('tests.csv'))
+            ->set('supportersUploadFilePath', base_path('tests/dummy-supporters.csv'))            ->set('campaignClass', TestCampaign::class)
             ->call('send');
 
         // Assert
