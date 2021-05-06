@@ -21,7 +21,6 @@ class SendCampaignTest extends TestCase
 {
 
 
-
     /** @test * */
     public function it_shows_campaigns_from_config_in_select(): void
     {
@@ -34,6 +33,53 @@ class SendCampaignTest extends TestCase
 
         Livewire::test(SendCampaign::class)
             ->assertSee('Test Campaign');
+    }
+
+    /** @test **/
+    public function it_validates_participants_upload_file(): void
+    {
+    	// Arrange & Act & Assert
+        Livewire::test(SendCampaign::class)
+            ->call('send')
+            ->assertHasErrors(['supportersUpload' => 'required']);
+
+        // Arrange & Act & Assert
+        Livewire::test(SendCampaign::class)
+            ->set('supportersUpload', UploadedFile::fake()->image('test.png'))
+            ->call('send')
+            ->assertHasErrors(['supportersUpload' => 'mimes']);
+
+    }
+
+    /** @test **/
+    public function it_dispatches_jobs_for_every_supporter_postcard(): void
+    {
+        // Arrange
+        Queue::fake();
+
+        // Act
+        Livewire::test(SendCampaign::class)
+            ->set('supportersUpload', UploadedFile::fake()->create('tests.csv'))
+            ->set('supportersUploadFilePath', base_path('tests/dummy-supporters.csv'))            ->set('campaignClass', TestCampaign::class)
+            ->call('send');
+
+        // Assert
+        Queue::assertPushed(OrderPostcardsUsingSupporter::class, 2);
+    }
+
+    /** @test **/
+    public function it_shows_success_message_after_dispatched_jobs(): void
+    {
+        // Arrange
+        Queue::fake();
+
+        // Act
+        Livewire::test(SendCampaign::class)
+            ->set('supportersUpload', UploadedFile::fake()->create('tests.csv'))
+            ->set('supportersUploadFilePath', base_path('tests/dummy-supporters.csv'))            ->set('campaignClass', TestCampaign::class)
+            ->call('send')
+            ->assertSee('Campaign successfully triggered.');
+
     }
 
     /** @test * */
@@ -103,22 +149,6 @@ class SendCampaignTest extends TestCase
             $this->getPostcardCoverUrls()
         );
 
-    }
-
-    /** @test **/
-    public function it_dispatches_jobs_for_every_supporter_postcard(): void
-    {
-        // Arrange
-        Queue::fake();
-
-        // Act
-        Livewire::test(SendCampaign::class)
-            ->set('supportersUpload', UploadedFile::fake()->create('tests.csv'))
-            ->set('supportersUploadFilePath', base_path('tests/dummy-supporters.csv'))            ->set('campaignClass', TestCampaign::class)
-            ->call('send');
-
-        // Assert
-        Queue::assertPushed(OrderPostcardsUsingSupporter::class, 2);
     }
 
     private function getPostcardCoverUrls(): array
