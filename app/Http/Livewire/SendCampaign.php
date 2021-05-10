@@ -27,6 +27,11 @@ class SendCampaign extends Component
         'supportersUpload.mimes' => 'The supporters file must be of type CSV.',
     ];
 
+    public function mount(): void
+    {
+        $this->campaignClass = config('postcards.campaigns')[0]['class'];
+    }
+
 
     public function render(): View
     {
