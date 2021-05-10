@@ -12,6 +12,10 @@ return [
 
     'campaigns' => [
         [
+            'name' => 'Transform Transport',
+            'class' => \App\Postcards\Campaigns\TransformTransport::class,
+        ],
+        [
             'name' => 'Ban Fossil Fuel Advertisements',
             'class' => \App\Postcards\Campaigns\BanFossilFuelAdvertisements::class,
         ],

@@ -57,7 +57,7 @@ abstract class Campaign implements CampaignContract
 
     public function getPostcardBackHtml(): string
     {
-        return view('pdf.template-default-back', ['message' => $this->supporterInfo['Message']])->render();
+        return view('pdf.default.back', ['message' => $this->supporterInfo['Message']])->render();
     }
 
     public function createPostcardFrontPdf(string $supporterCampaignDirectory): string

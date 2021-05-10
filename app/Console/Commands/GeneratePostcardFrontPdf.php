@@ -27,18 +27,19 @@ class GeneratePostcardFrontPdf extends Command
                 exit;
             }
 
-            $html = view('pdf.template-default-front', ['image' => $imageUrl])->render();
-            File::makeDirectory(public_path('pdfs/static/' . $this->option('campaign-name')));
+            $html = view('pdf.default.front', ['image' => $imageUrl])->render();
+            File::isDirectory(public_path('pdfs/static/' . $this->option('campaign-name'))) or File::makeDirectory(public_path('pdfs/static/' . $this->option('campaign-name')));
             $pdfPath = public_path('pdfs/static/' . $this->option('campaign-name') . '/' . $imageName . '.pdf');
 
             $pdfHelper = new PdfHelper();
             $pdfHelper->useHtml($html)
                 ->outputPath($pdfPath)
                 ->create();
+
+            $this->info($pdfPath);
+        } else {
+            $this->error('Campaign name options is missing');
         }
-
-        $this->error('Campaign name options is missing');
-
     }
 
     private function getImageIfGiven(string $image): array
