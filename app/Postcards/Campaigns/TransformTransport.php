@@ -20,7 +20,7 @@ class TransformTransport extends Campaign
                 'city' => 'London',
                 'state' => 'London',
                 'zip' => 'E5 8QX',
-                'country' => 'United Kingdom',
+                'country' => 'GB',
                 'return_address_id' => 99727,
                 'schedule' => 0,
             ]
