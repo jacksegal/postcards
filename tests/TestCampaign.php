@@ -24,7 +24,7 @@ class TestCampaign extends Campaign
                 'city' => 'Brussels',
                 'state' => 'Brussels',
                 'zip' => '11111',
-                'country' => 'Belgium',
+                'country' => 'BE',
                 'return_address_id' => 1,
                 'schedule' => 0,
             ]
