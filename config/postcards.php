@@ -22,6 +22,10 @@ return [
         [
             'name' => 'Test Campaign (Nothing gets send)',
             'class' => \Tests\TestCampaign::class,
+        ],
+        [
+            'name' => 'Test Campaign With Wrong Recipient Country (Nothing gets send)',
+            'class' => \Tests\TestCampaignWithWrongCountry::class,
         ]
     ]
 

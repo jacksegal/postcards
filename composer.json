@@ -18,7 +18,8 @@
         "laravel/tinker": "^2.5",
         "livewire/livewire": "^2.0",
         "predis/predis": "^1.1",
-        "spatie/simple-excel": "^1.13"
+        "spatie/simple-excel": "^1.13",
+      "ext-json": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
