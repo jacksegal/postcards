@@ -7,7 +7,6 @@ use App\Jobs\OrderPostcardsUsingSupporter;
 use App\Postcards\PostcardSendHelper;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -87,7 +86,7 @@ class SendCampaignTest extends TestCase
     {
         // Arrange
         Carbon::setTestNow(now());
-        Http::fake();
+        $this->app->instance(PostcardSendHelper::class, new FakePostcardHelper());
         $campaignDirectoryName = now()->format('Y-m-d__H-i-s') . '_' . Str::of(TestCampaign::class)->afterLast('\\')->snake();
 
         // Act
@@ -110,7 +109,7 @@ class SendCampaignTest extends TestCase
     {
         // Arrange
         Carbon::setTestNow(now());
-        Http::fake();
+        $this->app->instance(PostcardSendHelper::class, new FakePostcardHelper());
         $campaignDirectoryName = now()->format('Y-m-d__H-i-s') . '_' . Str::of(TestCampaign::class)->afterLast('\\')->snake();
 
         // Act
