@@ -15,6 +15,7 @@ class OrderPostcardsUsingSupporter implements ShouldQueue
 
     public array $supporterInfo;
     public $campaign;
+    public $tries = 1;
 
     public function __construct(array $supporterInfo, $campaign){
         $this->campaign = $campaign;
