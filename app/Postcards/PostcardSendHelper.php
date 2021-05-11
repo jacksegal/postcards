@@ -28,7 +28,6 @@ class PostcardSendHelper
             $response = $apiInstance->postPostcardsSendPost($PostPostcard);
             collect(json_decode($response)->data->recipients)->each(function (object $recipient) {
                 if ($recipient->status !== 'SUCCESS') {
-                    Log::error('ClickSend Error:' . $recipient->status . PHP_EOL);
                     throw new ClickSendException('Recipient Error: ' . $recipient->status);
                 }
             });
