@@ -12,7 +12,7 @@ class GreenHomes extends Campaign
     {
         return [
             [
-                'name' => $this->getMpNameFromSupporterInfo($supporterInfo),
+                'name' => $this->getMpNameFromSupporterInfo(),
                 'address_line_1' => 'House of Commons',
                 'address_line_2' => '',
                 'city' => 'London',
@@ -64,9 +64,9 @@ class GreenHomes extends Campaign
     }
 
 
-    private function getMpNameFromSupporterInfo(array $supporterInfo = [])
+    private function getMpNameFromSupporterInfo()
     {
-        return  $supporterInfo['Contact Title'] . ' ' . $supporterInfo['Contact First Name'] . ' ' . $supporterInfo['Contact Last Name'];
+        return  $this->supporterInfo['Contact Title'] . ' ' . $this->supporterInfo['Contact First Name'] . ' ' . $this->supporterInfo['Contact Last Name'];
     }
 
 }
