@@ -1,5 +1,6 @@
 <?php
 
+use ClickSend\Api\PostPostcardApi;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
@@ -14,6 +15,22 @@ use Illuminate\Support\Facades\Artisan;
 |
 */
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
+Artisan::command('clicksend:return', function () {
+
+    // Configure HTTP basic authorization: BasicAuth
+    $config = ClickSend\Configuration::getDefaultConfiguration()
+        ->setUsername(env('CLICKSEND_USERNAME'))
+        ->setPassword(env('CLICKSEND_API_KEY'));
+
+    $apiInstance = new ClickSend\Api\PostReturnAddressApi(new GuzzleHttp\Client(),$config);
+    $page = 1; // int | Page number
+    $limit = 10; // int | Number of records per page
+
+    try {
+        $result = $apiInstance->postReturnAddressesGet($page, $limit);
+        $this->info($result);
+    } catch (Exception $e) {
+        echo 'Exception when calling PostReturnAddressApi->postReturnAddressesGet: ', $e->getMessage(), PHP_EOL;
+    }
+
+})->purpose('Get all Return Addresses');

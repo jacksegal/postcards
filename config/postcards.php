@@ -12,6 +12,10 @@ return [
 
     'campaigns' => [
         [
+            'name' => 'Green Homes',
+            'class' => \App\Postcards\Campaigns\GreenHomes::class,
+        ],
+        [
             'name' => 'Transform Transport',
             'class' => \App\Postcards\Campaigns\TransformTransport::class,
         ],
