@@ -8,6 +8,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Support\Facades\Log;
 
 class OrderPostcardsUsingSupporter implements ShouldQueue
 {
@@ -32,6 +33,8 @@ class OrderPostcardsUsingSupporter implements ShouldQueue
         // Create back pdf for postcard
         $postcardBackPdfUrl = $this->campaign->createPostcardBackPdf($supporterCampaignDirectory, $this->supporterInfo);
 
+        Log::info($postcardFrontPdfUrl);
+        Log::info($postcardBackPdfUrl);
         $postcardSendHelper = app(PostcardSendHelper::class);
         $postcardSendHelper->send($this->campaign->createRecipients($this->supporterInfo), [$postcardFrontPdfUrl, $postcardBackPdfUrl]);
     }
